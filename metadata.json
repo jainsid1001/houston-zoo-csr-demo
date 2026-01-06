@@ -1,0 +1,8 @@
+{
+  "name": "Houston Zoo Access+",
+  "description": "A supplemental accessibility companion for Houston Zoo guests, featuring personalized navigation and AI assistance.",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation"
+  ]
+}
