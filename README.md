@@ -1,20 +1,40 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Houston Zoo Access+ 🌿
 
-# Run and deploy your AI Studio app
+An AI-powered accessible companion app for Houston Zoo guests. This application leverages the **Google Gemini API** (Gemini 3 Pro) to provide personalized navigation, accessibility insights, and real-time assistance for guests with mobility, visual, auditory, sensory, or cognitive needs.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/drive/1wxFsMTXBss3CBzMxgP77v-bccx9M6A-V
+- **Personalized Profiles**: Users can select one or multiple accessibility profiles (e.g., Mobility + Sensory) to get tailored information.
+- **Smart Guidebook**: A digital guide replacing traditional maps, offering specific accessibility notes for every habitat and amenity.
+- **ZooBuddy AI**: A context-aware chatbot that helps with navigation, animal facts, and accessibility support.
+- **Persistent State**: User preferences are saved automatically, ensuring a seamless experience throughout the visit.
 
-## Run Locally
+## Tech Stack
 
-**Prerequisites:**  Node.js
+- **Frontend**: React 19, TypeScript
+- **Styling**: Tailwind CSS, Lucide React Icons
+- **AI**: @google/genai (Gemini 3 Pro Preview)
+- **Formatting**: React Markdown
 
+## Setup
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1.  Clone the repository.
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Set your Google Gemini API Key in your environment variables or `.env` file:
+    ```bash
+    export API_KEY="your_api_key_here"
+    ```
+4.  Run the application:
+    ```bash
+    npm start
+    ```
+
+## Usage
+
+1.  Select your accessibility needs (Quick Select or Custom) upon first load.
+2.  Explore the zoo using the Guide view.
+3.  Click "Get Directions" on any card or tap the floating chat button to ask ZooBuddy for help!
+4.  Use the "Settings" button in the header to change your accessibility profile at any time.

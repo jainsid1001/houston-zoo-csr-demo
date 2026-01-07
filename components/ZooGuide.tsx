@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { AccessibilityProfile, POI } from '../types';
 import { ZOO_POIS } from '../constants';
-import { X, Info, Filter } from 'lucide-react';
+import { X, Info, Filter, Navigation } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 interface Props {
   profiles: AccessibilityProfile[];
+  onGetDirections: (poiName: string) => void;
 }
 
-const ZooGuide: React.FC<Props> = ({ profiles }) => {
+const ZooGuide: React.FC<Props> = ({ profiles, onGetDirections }) => {
   const [selectedPOI, setSelectedPOI] = useState<POI | null>(null);
   const [filter, setFilter] = useState<'all' | 'animal' | 'amenity'>('all');
 
@@ -101,7 +102,7 @@ const ZooGuide: React.FC<Props> = ({ profiles }) => {
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 pointer-events-none">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm pointer-events-auto transition-opacity" onClick={() => setSelectedPOI(null)}></div>
           
-          <div className="bg-white w-full max-w-lg rounded-t-[2.5rem] sm:rounded-[2.5rem] p-8 shadow-2xl pointer-events-auto animate-slide-up relative max-h-[85vh] overflow-y-auto">
+          <div className="bg-white w-full max-w-lg rounded-t-[2.5rem] sm:rounded-[2.5rem] p-8 shadow-2xl pointer-events-auto animate-slide-up relative max-h-[85vh] overflow-y-auto flex flex-col">
             
             <button 
               onClick={() => setSelectedPOI(null)}
@@ -118,7 +119,7 @@ const ZooGuide: React.FC<Props> = ({ profiles }) => {
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-6 flex-grow">
               <div className="bg-stone-50 p-6 rounded-3xl border border-stone-100">
                 <p className="text-stone-700 text-lg leading-relaxed font-medium">
                   {selectedPOI.description}
@@ -141,10 +142,19 @@ const ZooGuide: React.FC<Props> = ({ profiles }) => {
                   </ReactMarkdown>
                 </div>
               </div>
-              
-              <div className="flex justify-center">
-                 <p className="text-xs text-stone-400 font-medium italic">Ask ZooBuddy for the best route here!</p>
-              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-stone-100">
+                 <button 
+                    onClick={() => {
+                      onGetDirections(selectedPOI.name);
+                      setSelectedPOI(null);
+                    }}
+                    className="w-full bg-zoo-dark hover:bg-zoo-primary text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg transition-all hover:scale-[1.02]"
+                 >
+                    <Navigation size={20} />
+                    Get Directions with ZooBuddy
+                 </button>
             </div>
           </div>
         </div>

@@ -7,10 +7,20 @@ import { generateZooAssistantResponse } from '../services/geminiService';
 interface Props {
   profiles: AccessibilityProfile[];
   pois: POI[];
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  externalInput: string;
+  setExternalInput: (val: string) => void;
 }
 
-const Assistant: React.FC<Props> = ({ profiles, pois }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const Assistant: React.FC<Props> = ({ 
+  profiles, 
+  pois, 
+  isOpen, 
+  setIsOpen, 
+  externalInput, 
+  setExternalInput 
+}) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -32,13 +42,19 @@ const Assistant: React.FC<Props> = ({ profiles, pois }) => {
     scrollToBottom();
   }, [messages, isOpen]);
 
+  // Handle auto-focus and external inputs (like directions)
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
+
+      if (externalInput) {
+        setInput(externalInput);
+        setExternalInput(''); // Clear external input so it doesn't persist
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, externalInput, setExternalInput]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;

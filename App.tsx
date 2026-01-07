@@ -1,46 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserState, AccessibilityProfile } from './types';
-import LoginForm from './components/LoginForm';
 import AccessibilitySelector from './components/AccessibilitySelector';
 import ZooGuide from './components/ZooGuide';
 import Assistant from './components/Assistant';
 import { ZOO_POIS } from './constants';
-import { Settings, LogOut, Menu } from 'lucide-react';
+import { Settings } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [user, setUser] = useState<UserState>({
-    isLoggedIn: false,
-    username: '',
-    profiles: [], // Changed to array
+  // Load state from local storage or default
+  const [user, setUser] = useState<UserState>(() => {
+    try {
+      const saved = localStorage.getItem('zoo_user_state');
+      if (saved) {
+        // Ensure isLoggedIn is true even if loading old state
+        const parsed = JSON.parse(saved);
+        return { ...parsed, isLoggedIn: true };
+      }
+      return { isLoggedIn: true, username: 'Guest', profiles: [] };
+    } catch (e) {
+      return { isLoggedIn: true, username: 'Guest', profiles: [] };
+    }
   });
 
-  const handleLogin = (username: string) => {
-    setUser({ ...user, isLoggedIn: true, username });
-  };
+  // Assistant State (Lifted to allow ZooGuide to trigger it)
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [assistantInput, setAssistantInput] = useState('');
+
+  // Persist user state whenever it changes
+  useEffect(() => {
+    localStorage.setItem('zoo_user_state', JSON.stringify(user));
+  }, [user]);
 
   const handleProfileSelect = (profiles: AccessibilityProfile[]) => {
     setUser({ ...user, profiles });
-  };
-
-  const handleLogout = () => {
-    setUser({ isLoggedIn: false, username: '', profiles: [] });
   };
 
   const resetProfile = () => {
     setUser({ ...user, profiles: [] });
   };
 
-  // 1. Not Logged In
-  if (!user.isLoggedIn) {
-    return <LoginForm onLogin={handleLogin} />;
-  }
+  const handleGetDirections = (poiName: string) => {
+    setAssistantInput(`How do I get to ${poiName} from here?`);
+    setIsAssistantOpen(true);
+  };
 
-  // 2. Logged In, No Profile Selected
+  // 1. No Profile Selected (Onboarding)
   if (user.profiles.length === 0) {
     return <AccessibilitySelector onSelect={handleProfileSelect} />;
   }
 
-  // 3. Main Dashboard (Guide View)
+  // 2. Main Dashboard
   return (
     <div className="h-screen w-full flex flex-col bg-stone-50">
       {/* Premium App Header */}
@@ -69,20 +78,23 @@ const App: React.FC = () => {
             <Settings size={22} className="group-hover:rotate-45 transition-transform" />
             <span className="text-sm font-semibold hidden md:inline">Settings</span>
           </button>
-          <button 
-            onClick={handleLogout}
-            className="p-2.5 text-stone-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
-            title="Log Out"
-          >
-            <LogOut size={22} />
-          </button>
         </div>
       </header>
 
       {/* Main Content Area */}
       <main className="flex-1 relative overflow-hidden">
-        <ZooGuide profiles={user.profiles} />
-        <Assistant profiles={user.profiles} pois={ZOO_POIS} />
+        <ZooGuide 
+          profiles={user.profiles} 
+          onGetDirections={handleGetDirections}
+        />
+        <Assistant 
+          profiles={user.profiles} 
+          pois={ZOO_POIS} 
+          isOpen={isAssistantOpen}
+          setIsOpen={setIsAssistantOpen}
+          externalInput={assistantInput}
+          setExternalInput={setAssistantInput}
+        />
       </main>
     </div>
   );
